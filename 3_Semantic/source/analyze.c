@@ -383,8 +383,11 @@ switch (t->nodekind){
 				a = exp_type_check(t->child[0],scope);
 				b = exp_type_check(t->child[1],scope);
 				k = t->attr.op;
-				if(k==PLUS || k==MINUS || k==TIMES || k==OVER)
 				if(a==-1 || b==-1) return -1;
+				if(a==0 || b==0){
+					typeError(t,"Operation on void type");
+					return -1;
+				}
 				if(a != b){
 					typeError(t,"Types of operands are not equal");
 					return -1;
@@ -416,7 +419,8 @@ switch (t->nodekind){
 				}
 				//argument num check
 				if(arg_num != l->parm.arg_size){
-					typeError(t,"Argument number is not equal");
+					sprintf(message_box,"Argument number is not equal in %s",t->attr.name);
+					typeError(t,message_box);
 					return -1;
 				}
 				TreeNode* temp2 = t->child[0];
@@ -425,7 +429,8 @@ switch (t->nodekind){
 					k = exp_type_check(temp2,scope);
 					if(k == -1) return -1;
 					if( l->parm.type[i] != k){
-						typeError(t,"Argument type error");
+						sprintf(message_box,"Argument type error in %s",t->attr.name);
+						typeError(t,message_box);
 						return -1;
 					}
 					temp2 = temp2->sibling;
